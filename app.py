@@ -4,7 +4,7 @@ import os
 import numpy as np
 import pandas as pd
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='.')
 
 # Path to the models directory
 MODEL_DIR = 'federated_models'

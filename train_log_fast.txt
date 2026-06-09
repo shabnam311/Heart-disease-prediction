@@ -986,11 +986,11 @@ You can now run Cell 8 to start federated learning training.
 
 ================================================================================
 ULTRA-AGGRESSIVE FEDERATED LEARNING
-Target: 92%+ Accuracy, 95%+ F1 | 15 Rounds
+Target: 92%+ Accuracy, 95%+ F1 | 1 Rounds
 ================================================================================
 
 ================================================================================
-ROUND 1/15
+ROUND 1/1
 ================================================================================
 
 ============================================================
@@ -1004,8 +1004,8 @@ Training server_1 (NORMAL) - Round 1
   [5/5] Training ultra-strong ensemble...
 
   RESULTS:
-    Test Accuracy: 0.5239
-    Test F1-Score: 0.5203
+    Test Accuracy: 0.5248
+    Test F1-Score: 0.5213
 
 ============================================================
 Training server_2 (LOW_QUALITY) - Round 1
@@ -1034,8 +1034,8 @@ Training server_3 (NORMAL) - Round 1
   [5/5] Training ultra-strong ensemble...
 
   RESULTS:
-    Test Accuracy: 0.5367
-    Test F1-Score: 0.5293
+    Test Accuracy: 0.5354
+    Test F1-Score: 0.5281
 
 ============================================================
 Training server_4 (HIGH_QUALITY) - Round 1
@@ -1046,36 +1046,7 @@ Training server_4 (HIGH_QUALITY) - Round 1
   [4/5] Aggressive balancing...
        5260 → 5464 samples
   [5/5] Training ultra-strong ensemble...
-Exception ignored in: <function Variable.__del__ at 0x000001DA085D6340>
-Traceback (most recent call last):
-  File "C:\Users\shabnam\AppData\Local\Programs\Python\Python312\Lib\tkinter\__init__.py", line 414, in __del__
-    if self._tk.getboolean(self._tk.call("info", "exists", self._name)):
-                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-RuntimeError: main thread is not in main loop
-Exception ignored in: <function Variable.__del__ at 0x000001DA085D6340>
-Traceback (most recent call last):
-  File "C:\Users\shabnam\AppData\Local\Programs\Python\Python312\Lib\tkinter\__init__.py", line 414, in __del__
-    if self._tk.getboolean(self._tk.call("info", "exists", self._name)):
-                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-RuntimeError: main thread is not in main loop
-Exception ignored in: <function Variable.__del__ at 0x000001DA085D6340>
-Traceback (most recent call last):
-  File "C:\Users\shabnam\AppData\Local\Programs\Python\Python312\Lib\tkinter\__init__.py", line 414, in __del__
-    if self._tk.getboolean(self._tk.call("info", "exists", self._name)):
-                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-RuntimeError: main thread is not in main loop
-Exception ignored in: <function Variable.__del__ at 0x000001DA085D6340>
-Traceback (most recent call last):
-  File "C:\Users\shabnam\AppData\Local\Programs\Python\Python312\Lib\tkinter\__init__.py", line 414, in __del__
-    if self._tk.getboolean(self._tk.call("info", "exists", self._name)):
-                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-RuntimeError: main thread is not in main loop
-Exception ignored in: <function Image.__del__ at 0x000001DA08628B80>
-Traceback (most recent call last):
-  File "C:\Users\shabnam\AppData\Local\Programs\Python\Python312\Lib\tkinter\__init__.py", line 4117, in __del__
-    self.tk.call('image', 'delete', self.name)
-RuntimeError: main thread is not in main loop
-[00:24:04] WARNING: C:\actions-runner\_work\xgboost\xgboost\src\common\error_msg.cc:62: Falling back to prediction using DMatrix due to mismatched devices. This might lead to higher memory usage and slower performance. XGBoost is running on: cuda:0, while the input data is on: cpu.
+[00:42:10] WARNING: C:\actions-runner\_work\xgboost\xgboost\src\common\error_msg.cc:62: Falling back to prediction using DMatrix due to mismatched devices. This might lead to higher memory usage and slower performance. XGBoost is running on: cuda:0, while the input data is on: cpu.
 Potential solutions:
 - Use a data structure that matches the device ordinal in the booster.
 - Set the device for booster before call to inplace_predict.
@@ -1084,8 +1055,8 @@ This warning will only be shown once.
 
 
   RESULTS:
-    Test Accuracy: 0.5222
-    Test F1-Score: 0.5176
+    Test Accuracy: 0.5230
+    Test F1-Score: 0.5186
 
 ============================================================
 Training server_5 (NOISY_LABELS) - Round 1
@@ -1100,8 +1071,8 @@ Training server_5 (NOISY_LABELS) - Round 1
   [5/5] Training ultra-strong ensemble...
 
   RESULTS:
-    Test Accuracy: 0.5098
-    Test F1-Score: 0.5030
+    Test Accuracy: 0.5089
+    Test F1-Score: 0.5022
 
 ============================================================
 Training server_6 (NORMAL) - Round 1
@@ -1142,8 +1113,8 @@ Training server_8 (NORMAL) - Round 1
   [5/5] Training ultra-strong ensemble...
 
   RESULTS:
-    Test Accuracy: 0.5408
-    Test F1-Score: 0.5370
+    Test Accuracy: 0.5399
+    Test F1-Score: 0.5362
 
 ============================================================
 Training server_9 (POISONED) - Round 1
@@ -1181,251 +1152,31 @@ Training server_10 (OUTLIER_FEATURES) - Round 1
 --------------------------------------------------------------------------------
 SERVER       | ACCURACY   | F1-SCORE  
 --------------------------------------------------------------------------------
-server_1     | 0.5239     | 0.5203    
-server_2     | 0.4929     | 0.4797    
-server_3     | 0.5367     | 0.5293    
-server_4     | 0.5222     | 0.5176    
-server_5     | 0.5098     | 0.5030    
-server_6     | 0.5257     | 0.5191    
-server_7     | 0.5372     | 0.5320    
-server_8     | 0.5408     | 0.5370    
-server_9     | 0.5080     | 0.3503    
-server_10    | 0.5092     | 0.5053    
---------------------------------------------------------------------------------
-AVG METRICS  | 0.5206     | 0.4994    
---------------------------------------------------------------------------------
-
-================================================================================
-ROUND 2/15
-================================================================================
-
-============================================================
-Training server_1 (NORMAL) - Round 2
-============================================================
-  [1/5] Ultra feature engineering...
-       Feature selection: 990 → 80 features
-  [3/5] Scaling...
-  [4/5] Aggressive balancing...
-       5260 → 5784 samples
-  [5/5] Training ultra-strong ensemble...
-
-  RESULTS:
-    Test Accuracy: 0.5248
-    Test F1-Score: 0.5213
-
-============================================================
-Training server_2 (LOW_QUALITY) - Round 2
-============================================================
-  [1/5] Ultra feature engineering...
-       Feature selection: 990 → 80 features
-  [2/5] Removing outliers...
-       Samples after cleaning: 4697
-  [3/5] Scaling...
-  [4/5] Aggressive balancing...
-       4697 → 4710 samples
-  [5/5] Training ultra-strong ensemble...
-
-  RESULTS:
-    Test Accuracy: 0.4929
-    Test F1-Score: 0.4797
-
-============================================================
-Training server_3 (NORMAL) - Round 2
-============================================================
-  [1/5] Ultra feature engineering...
-       Feature selection: 990 → 80 features
-  [3/5] Scaling...
-  [4/5] Aggressive balancing...
-       7574 → 7564 samples
-  [5/5] Training ultra-strong ensemble...
-
-  RESULTS:
-    Test Accuracy: 0.5360
-    Test F1-Score: 0.5288
-
-============================================================
-Training server_4 (HIGH_QUALITY) - Round 2
-============================================================
-  [1/5] Ultra feature engineering...
-       Feature selection: 990 → 80 features
-  [3/5] Scaling...
-  [4/5] Aggressive balancing...
-       5260 → 5466 samples
-  [5/5] Training ultra-strong ensemble...
-[00:31:26] WARNING: C:\actions-runner\_work\xgboost\xgboost\src\common\error_msg.cc:62: Falling back to prediction using DMatrix due to mismatched devices. This might lead to higher memory usage and slower performance. XGBoost is running on: cuda:0, while the input data is on: cpu.
-Potential solutions:
-- Use a data structure that matches the device ordinal in the booster.
-- Set the device for booster before call to inplace_predict.
-
-This warning will only be shown once.
-
-
-  RESULTS:
-    Test Accuracy: 0.5230
-    Test F1-Score: 0.5184
-
-============================================================
-Training server_5 (NOISY_LABELS) - Round 2
-============================================================
-  [1/5] Ultra feature engineering...
-       Feature selection: 990 → 80 features
-  [2/5] AGGRESSIVE label cleaning...
-       Corrected 2575 labels (49.0%)
-  [3/5] Scaling...
-  [4/5] Aggressive balancing...
-       5260 → 8842 samples
-  [5/5] Training ultra-strong ensemble...
-
-  RESULTS:
-    Test Accuracy: 0.5089
-    Test F1-Score: 0.5022
-
-============================================================
-Training server_6 (NORMAL) - Round 2
-============================================================
-  [1/5] Ultra feature engineering...
-       Feature selection: 990 → 80 features
-  [3/5] Scaling...
-  [4/5] Aggressive balancing...
-       5260 → 5572 samples
-  [5/5] Training ultra-strong ensemble...
-
-  RESULTS:
-    Test Accuracy: 0.5257
-    Test F1-Score: 0.5191
-
-============================================================
-Training server_7 (IMBALANCED) - Round 2
-============================================================
-  [1/5] Ultra feature engineering...
-       Feature selection: 990 → 80 features
-  [3/5] Scaling...
-  [4/5] Aggressive balancing...
-       8206 → 8204 samples
-  [5/5] Training ultra-strong ensemble...
-
-  RESULTS:
-    Test Accuracy: 0.5372
-    Test F1-Score: 0.5320
-
-============================================================
-Training server_8 (NORMAL) - Round 2
-============================================================
-  [1/5] Ultra feature engineering...
-       Feature selection: 990 → 80 features
-  [3/5] Scaling...
-  [4/5] Aggressive balancing...
-       5259 → 5782 samples
-  [5/5] Training ultra-strong ensemble...
-
-  RESULTS:
-    Test Accuracy: 0.5390
-    Test F1-Score: 0.5348
-
-============================================================
-Training server_9 (POISONED) - Round 2
-============================================================
-  [1/5] Ultra feature engineering...
-       Feature selection: 990 → 80 features
-  [2/5] AGGRESSIVE label cleaning...
-       Corrected 2589 labels (49.2%)
-  [2/5] Removing outliers...
-  [3/5] Scaling...
-  [4/5] Aggressive balancing...
-       5259 → 10426 samples
-  [5/5] Training ultra-strong ensemble...
-
-  RESULTS:
-    Test Accuracy: 0.5080
-    Test F1-Score: 0.3503
-
-============================================================
-Training server_10 (OUTLIER_FEATURES) - Round 2
-============================================================
-  [1/5] Ultra feature engineering...
-       Feature selection: 990 → 80 features
-  [2/5] Removing outliers...
-       Samples after cleaning: 6493
-  [3/5] Scaling...
-  [4/5] Aggressive balancing...
-       6493 → 6570 samples
-  [5/5] Training ultra-strong ensemble...
-
-  RESULTS:
-    Test Accuracy: 0.5124
-    Test F1-Score: 0.5099
-
---------------------------------------------------------------------------------
-SERVER       | ACCURACY   | F1-SCORE  
---------------------------------------------------------------------------------
 server_1     | 0.5248     | 0.5213    
 server_2     | 0.4929     | 0.4797    
-server_3     | 0.5360     | 0.5288    
-server_4     | 0.5230     | 0.5184    
+server_3     | 0.5354     | 0.5281    
+server_4     | 0.5230     | 0.5186    
 server_5     | 0.5089     | 0.5022    
 server_6     | 0.5257     | 0.5191    
 server_7     | 0.5372     | 0.5320    
-server_8     | 0.5390     | 0.5348    
+server_8     | 0.5399     | 0.5362    
 server_9     | 0.5080     | 0.3503    
-server_10    | 0.5124     | 0.5099    
+server_10    | 0.5092     | 0.5053    
 --------------------------------------------------------------------------------
-AVG METRICS  | 0.5208     | 0.4996    
+AVG METRICS  | 0.5205     | 0.4993    
 --------------------------------------------------------------------------------
 
 ================================================================================
-ROUND 3/15
+TRAINING COMPLETE
 ================================================================================
-
-============================================================
-Training server_1 (NORMAL) - Round 3
-============================================================
-  [1/5] Ultra feature engineering...
-       Feature selection: 990 → 80 features
-  [3/5] Scaling...
-  [4/5] Aggressive balancing...
-       5260 → 5784 samples
-  [5/5] Training ultra-strong ensemble...
-
-  RESULTS:
-    Test Accuracy: 0.5248
-    Test F1-Score: 0.5213
-
-============================================================
-Training server_2 (LOW_QUALITY) - Round 3
-============================================================
-  [1/5] Ultra feature engineering...
-       Feature selection: 990 → 80 features
-  [2/5] Removing outliers...
-       Samples after cleaning: 4697
-  [3/5] Scaling...
-  [4/5] Aggressive balancing...
-       4697 → 4710 samples
-  [5/5] Training ultra-strong ensemble...
-
-  RESULTS:
-    Test Accuracy: 0.4929
-    Test F1-Score: 0.4797
-
-============================================================
-Training server_3 (NORMAL) - Round 3
-============================================================
-  [1/5] Ultra feature engineering...
-       Feature selection: 990 → 80 features
-  [3/5] Scaling...
-  [4/5] Aggressive balancing...
-       7574 → 7562 samples
-  [5/5] Training ultra-strong ensemble...
-
-  RESULTS:
-    Test Accuracy: 0.5367
-    Test F1-Score: 0.5293
-
-============================================================
-Training server_4 (HIGH_QUALITY) - Round 3
-============================================================
-  [1/5] Ultra feature engineering...
-       Feature selection: 990 → 80 features
-  [3/5] Scaling...
-  [4/5] Aggressive balancing...
-       5260 → 5460 samples
-  [5/5] Training ultra-strong ensemble...
+✓ Saved server_1 → d:/Heart-disease-prediction/federated_models\server_1_model.pkl
+✓ Saved server_2 → d:/Heart-disease-prediction/federated_models\server_2_model.pkl
+✓ Saved server_3 → d:/Heart-disease-prediction/federated_models\server_3_model.pkl
+✓ Saved server_4 → d:/Heart-disease-prediction/federated_models\server_4_model.pkl
+✓ Saved server_5 → d:/Heart-disease-prediction/federated_models\server_5_model.pkl
+✓ Saved server_6 → d:/Heart-disease-prediction/federated_models\server_6_model.pkl
+✓ Saved server_7 → d:/Heart-disease-prediction/federated_models\server_7_model.pkl
+✓ Saved server_8 → d:/Heart-disease-prediction/federated_models\server_8_model.pkl
+✓ Saved server_9 → d:/Heart-disease-prediction/federated_models\server_9_model.pkl
+✓ Saved server_10 → d:/Heart-disease-prediction/federated_models\server_10_model.pkl
+All models saved to Drive.

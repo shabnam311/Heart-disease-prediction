@@ -1897,47 +1897,48 @@ def create_ultra_strong_model(server_condition, random_state=42):
     if server_condition == 'HIGH_QUALITY':
         # Triple stacking ensemble
         level0 = [
-            ('hgb1', HistGradientBoostingClassifier(max_iter=500, learning_rate=0.05, max_depth=12, random_state=random_state)),
-            ('hgb2', HistGradientBoostingClassifier(max_iter=400, learning_rate=0.08, max_depth=10, random_state=random_state+1)),
-            ('rf1', RandomForestClassifier(n_estimators=500, max_depth=20, min_samples_split=5, random_state=random_state)),
-            ('rf2', RandomForestClassifier(n_estimators=400, max_depth=15, min_samples_split=10, random_state=random_state+1)),
-            ('gb', GradientBoostingClassifier(n_estimators=400, learning_rate=0.07, max_depth=10, random_state=random_state)),
+            ('hgb1', HistGradientBoostingClassifier(max_iter=20, learning_rate=0.05, max_depth=12, random_state=random_state)),
+            ('hgb2', HistGradientBoostingClassifier(max_iter=20, learning_rate=0.08, max_depth=10, random_state=random_state+1)),
+            ('rf1', RandomForestClassifier(n_estimators=20, max_depth=20, min_samples_split=5, random_state=random_state, n_jobs=-1)),
+            ('rf2', RandomForestClassifier(n_estimators=20, max_depth=15, min_samples_split=10, random_state=random_state+1, n_jobs=-1)),
+            ('gb', GradientBoostingClassifier(n_estimators=20, learning_rate=0.07, max_depth=10, random_state=random_state)),
         ]
 
         if HAS_XGB:
-            level0.append(('xgb', XGBClassifier(n_estimators=500, max_depth=8, learning_rate=0.05, random_state=random_state)))
+            level0.append(('xgb', XGBClassifier(tree_method='hist', device='cuda', n_estimators=20, max_depth=8, learning_rate=0.05, random_state=random_state)))
 
         return StackingClassifier(
             estimators=level0,
             final_estimator=LogisticRegression(C=1.0, max_iter=1000),
-            cv=5
+            cv=3,
+            n_jobs=-1
         )
 
     elif server_condition in ['POISONED', 'NOISY_LABELS']:
         # Robust voting ensemble
         estimators = [
-            ('hgb', HistGradientBoostingClassifier(max_iter=400, learning_rate=0.06, max_depth=11, l2_regularization=1.0, random_state=random_state)),
-            ('rf', RandomForestClassifier(n_estimators=500, max_depth=12, min_samples_split=15, min_samples_leaf=8, random_state=random_state)),
-            ('gb', GradientBoostingClassifier(n_estimators=350, learning_rate=0.06, max_depth=8, subsample=0.8, random_state=random_state)),
+            ('hgb', HistGradientBoostingClassifier(max_iter=20, learning_rate=0.06, max_depth=11, l2_regularization=1.0, random_state=random_state)),
+            ('rf', RandomForestClassifier(n_estimators=20, max_depth=12, min_samples_split=15, min_samples_leaf=8, random_state=random_state, n_jobs=-1)),
+            ('gb', GradientBoostingClassifier(n_estimators=20, learning_rate=0.06, max_depth=8, subsample=0.8, random_state=random_state)),
         ]
 
         if HAS_XGB:
-            estimators.append(('xgb', XGBClassifier(n_estimators=400, max_depth=7, learning_rate=0.05, reg_alpha=1.0, random_state=random_state)))
+            estimators.append(('xgb', XGBClassifier(tree_method='hist', device='cuda', n_estimators=20, max_depth=7, learning_rate=0.05, reg_alpha=1.0, random_state=random_state)))
 
-        return VotingClassifier(estimators=estimators, voting='soft')
+        return VotingClassifier(estimators=estimators, voting='soft', n_jobs=-1)
 
     else:
         # Strong default ensemble
         estimators = [
-            ('hgb', HistGradientBoostingClassifier(max_iter=450, learning_rate=0.07, max_depth=12, random_state=random_state)),
-            ('rf', RandomForestClassifier(n_estimators=450, max_depth=18, min_samples_split=5, random_state=random_state)),
-            ('gb', GradientBoostingClassifier(n_estimators=400, learning_rate=0.07, max_depth=9, random_state=random_state)),
+            ('hgb', HistGradientBoostingClassifier(max_iter=20, learning_rate=0.07, max_depth=12, random_state=random_state)),
+            ('rf', RandomForestClassifier(n_estimators=20, max_depth=18, min_samples_split=5, random_state=random_state, n_jobs=-1)),
+            ('gb', GradientBoostingClassifier(n_estimators=20, learning_rate=0.07, max_depth=9, random_state=random_state)),
         ]
 
         if HAS_XGB:
-            estimators.append(('xgb', XGBClassifier(n_estimators=450, max_depth=8, learning_rate=0.06, random_state=random_state)))
+            estimators.append(('xgb', XGBClassifier(tree_method='hist', device='cuda', n_estimators=20, max_depth=8, learning_rate=0.06, random_state=random_state)))
 
-        return VotingClassifier(estimators=estimators, voting='soft')
+        return VotingClassifier(estimators=estimators, voting='soft', n_jobs=-1)
 
 # =============================================================================
 # PART 4: MAIN TRAINING LOGIC
@@ -1997,14 +1998,18 @@ class UltraAggressiveFederatedLearner:
         if condition in ['POISONED', 'NOISY_LABELS']:
             print("  [2/5] AGGRESSIVE label cleaning...")
             cleaner = AggressiveDataCleaner()
-            y_train, n_corrected = cleaner.clean_poisoned_labels(X_train_eng, y_train, threshold=0.65)
-            print(f"       Corrected {n_corrected} labels ({n_corrected/len(y_train)*100:.1f}%)")
+            y_clean, n_corrected = cleaner.clean_poisoned_labels(X_train_eng, y_train, threshold=0.65)
+            if len(np.unique(y_clean)) > 1:
+                y_train = y_clean
+                print(f"       Corrected {n_corrected} labels ({n_corrected/len(y_train)*100:.1f}%)")
 
         if condition in ['OUTLIER_FEATURES', 'LOW_QUALITY', 'POISONED']:
             print("  [2/5] Removing outliers...")
             cleaner = AggressiveDataCleaner()
-            X_train_eng, y_train = cleaner.ultra_clean_outliers(X_train_eng, y_train)
-            print(f"       Samples after cleaning: {len(y_train)}")
+            X_clean, y_clean = cleaner.ultra_clean_outliers(X_train_eng, y_train)
+            if len(np.unique(y_clean)) > 1:
+                X_train_eng, y_train = X_clean, y_clean
+                print(f"       Samples after cleaning: {len(y_train)}")
 
         # Step 3: Scaling
         print("  [3/5] Scaling...")
@@ -2102,7 +2107,7 @@ class UltraAggressiveFederatedLearner:
 
 if __name__ == '__main__':
     if 'processed_dfs' in globals():
-        learner = UltraAggressiveFederatedLearner(processed_dfs, num_rounds=15)
+        learner = UltraAggressiveFederatedLearner(processed_dfs, num_rounds=1)
         personalized_models = learner.run()
         
         print("\n" + "="*80)
