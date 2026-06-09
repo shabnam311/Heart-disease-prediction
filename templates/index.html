@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Federated CVD Prediction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --secondary: #ec4899;
+            --bg-dark: #0f172a;
+            --surface-dark: rgba(30, 41, 59, 0.7);
+            --surface-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.15) 0px, transparent 50%);
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: var(--surface-dark);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--surface-border);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #818cf8, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .form-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        /* Span full width for specific fields */
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        input, select {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--surface-border);
+            color: var(--text-main);
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+        }
+
+        .predict-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid var(--surface-border);
+        }
+
+        button.predict-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button.predict-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(79, 70, 229, 0.4);
+        }
+
+        button.predict-btn:active {
+            transform: translateY(1px);
+        }
+
+        .result-card {
+            margin-top: 2rem;
+            width: 100%;
+            text-align: center;
+            padding: 2rem;
+            border-radius: 16px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .result-card.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result-card.high-risk {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .result-card.low-risk {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .result-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-prob {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .high-risk .result-title, .high-risk .result-prob { color: var(--danger); }
+        .low-risk .result-title, .low-risk .result-prob { color: var(--success); }
+
+        .loader {
+            display: none;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            position: absolute;
+            left: calc(50% - 12px);
+            top: calc(50% - 12px);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn-text {
+            transition: opacity 0.3s;
+        }
+
+        .loading .btn-text {
+            opacity: 0;
+        }
+
+        .loading .loader {
+            display: block;
+        }
+
+        /* Server selector */
+        .server-selector {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border: 1px dashed var(--primary);
+        }
+
+        .server-selector select {
+            flex: 1;
+            background: var(--bg-dark);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Federated CVD AI</h1>
+            <p class="subtitle">Secure, decentralized cardiovascular disease prediction</p>
+        </div>
+
+        <div class="form-section">
+            <div class="server-selector">
+                <label>Federated Hospital Model:</label>
+                <select id="serverSelect">
+                    <option value="server_1">Server 1 (Normal Data)</option>
+                    <option value="server_2">Server 2 (Normal Data)</option>
+                    <option value="server_3">Server 3 (Normal Data)</option>
+                    <option value="server_4">Server 4 (Normal Data)</option>
+                    <option value="server_5">Server 5 (Normal Data)</option>
+                    <option value="server_6">Server 6 (Imbalanced Data)</option>
+                    <option value="server_7">Server 7 (Imbalanced Data)</option>
+                    <option value="server_8">Server 8 (Normal Data)</option>
+                    <option value="server_9">Server 9 (Poisoned Data)</option>
+                    <option value="server_10">Server 10 (Outlier Data)</option>
+                </select>
+            </div>
+
+            <!-- Features -->
+            <div class="input-group">
+                <label>Age</label>
+                <input type="number" id="age" value="55" min="20" max="100">
+            </div>
+            
+            <div class="input-group">
+                <label>Sex</label>
+                <select id="sex">
+                    <option value="1">Male</option>
+                    <option value="0">Female</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Chest Pain Type (cp)</label>
+                <select id="cp">
+                    <option value="0">Typical Angina (0)</option>
+                    <option value="1">Atypical Angina (1)</option>
+                    <option value="2">Non-anginal Pain (2)</option>
+                    <option value="3">Asymptomatic (3)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Resting Blood Pressure (trestbps)</label>
+                <input type="number" id="trestbps" value="130" min="80" max="250">
+            </div>
+
+            <div class="input-group">
+                <label>Cholesterol (chol)</label>
+                <input type="number" id="chol" value="240" min="100" max="600">
+            </div>
+
+            <div class="input-group">
+                <label>Fasting Blood Sugar > 120 (fbs)</label>
+                <select id="fbs">
+                    <option value="0">False (0)</option>
+                    <option value="1">True (1)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Resting ECG (restecg)</label>
+                <select id="restecg">
+                    <option value="0">Normal (0)</option>
+                    <option value="1">ST-T Abnormality (1)</option>
+                    <option value="2">LV Hypertrophy (2)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Max Heart Rate (thalach)</label>
+                <input type="number" id="thalach" value="150" min="60" max="220">
+            </div>
+
+            <div class="input-group">
+                <label>Exercise Induced Angina (exang)</label>
+                <select id="exang">
+                    <option value="0">No (0)</option>
+                    <option value="1">Yes (1)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>ST Depression (oldpeak)</label>
+                <input type="number" step="0.1" id="oldpeak" value="1.0" min="0" max="6">
+            </div>
+
+            <div class="input-group full-width">
+                <label>Slope of Peak Exercise ST (slope)</label>
+                <select id="slope">
+                    <option value="0">Upsloping (0)</option>
+                    <option value="1">Flat (1)</option>
+                    <option value="2">Downsloping (2)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Num Major Vessels (ca)</label>
+                <select id="ca">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Thalassemia (thal)</label>
+                <select id="thal">
+                    <option value="1">Normal (1)</option>
+                    <option value="2">Fixed Defect (2)</option>
+                    <option value="3">Reversable Defect (3)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="predict-panel">
+            <button class="predict-btn" id="predictBtn" onclick="makePrediction()">
+                <span class="btn-text">Run Neural Analysis</span>
+                <div class="loader"></div>
+            </button>
+
+            <div class="result-card" id="resultCard">
+                <div class="result-title" id="resultTitle">Analysis Complete</div>
+                <div class="result-prob" id="resultProb">--%</div>
+                <p id="resultDesc">Waiting for input...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function makePrediction() {
+            const btn = document.getElementById('predictBtn');
+            const resultCard = document.getElementById('resultCard');
+            
+            // Set loading state
+            btn.classList.add('loading');
+            btn.disabled = true;
+            resultCard.classList.remove('active', 'high-risk', 'low-risk');
+
+            // Gather data
+            const data = {
+                server: document.getElementById('serverSelect').value,
+                age: document.getElementById('age').value,
+                sex: document.getElementById('sex').value,
+                cp: document.getElementById('cp').value,
+                trestbps: document.getElementById('trestbps').value,
+                chol: document.getElementById('chol').value,
+                fbs: document.getElementById('fbs').value,
+                restecg: document.getElementById('restecg').value,
+                thalach: document.getElementById('thalach').value,
+                exang: document.getElementById('exang').value,
+                oldpeak: document.getElementById('oldpeak').value,
+                slope: document.getElementById('slope').value,
+                ca: document.getElementById('ca').value,
+                thal: document.getElementById('thal').value
+            };
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    const probPercent = (result.probability * 100).toFixed(1);
+                    const isHighRisk = result.prediction === 1;
+
+                    document.getElementById('resultProb').textContent = probPercent + '%';
+                    
+                    if (isHighRisk) {
+                        document.getElementById('resultTitle').textContent = 'High CVD Risk Detected';
+                        document.getElementById('resultDesc').textContent = 'The selected federated model predicts a high probability of cardiovascular disease based on these biometrics.';
+                        resultCard.classList.add('high-risk');
+                    } else {
+                        document.getElementById('resultTitle').textContent = 'Low CVD Risk';
+                        document.getElementById('resultDesc').textContent = 'The model predicts low probability of cardiovascular disease. Maintain healthy habits.';
+                        resultCard.classList.add('low-risk');
+                    }
+                } else {
+                    document.getElementById('resultTitle').textContent = 'Error';
+                    document.getElementById('resultProb').textContent = '---';
+                    document.getElementById('resultDesc').textContent = result.error || 'Failed to analyze data.';
+                    resultCard.classList.add('high-risk');
+                }
+            } catch (error) {
+                document.getElementById('resultTitle').textContent = 'Connection Error';
+                document.getElementById('resultProb').textContent = '---';
+                document.getElementById('resultDesc').textContent = 'Could not connect to the local inference server.';
+                resultCard.classList.add('high-risk');
+            }
+
+            // Remove loading state
+            btn.classList.remove('loading');
+            btn.disabled = false;
+            
+            // Trigger animation
+            setTimeout(() => {
+                resultCard.classList.add('active');
+            }, 100);
+        }
+    </script>
+</body>
+</html>

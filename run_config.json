@@ -1,0 +1,15 @@
+{
+  "seed": 42,
+  "device": "cpu",
+  "data_paths": {
+    "cleveland": "d:/Heart-disease-prediction/data/processed.cleveland.data",
+    "hungarian": "d:/Heart-disease-prediction/data/processed.hungarian.data",
+    "switzerland": "d:/Heart-disease-prediction/data/processed.switzerland.data",
+    "va": "d:/Heart-disease-prediction/data/processed.va.data",
+    "framingham": "d:/Heart-disease-prediction/data/framingham.csv",
+    "sulianova": "d:/Heart-disease-prediction/data/cardio_train.csv",
+    "akshat": "d:/Heart-disease-prediction/data/health_data.csv"
+  },
+  "pool_scaler": true,
+  "oversample": true
+}
