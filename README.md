@@ -30,7 +30,12 @@ federated-cvd-prediction/
    cd Heart-disease-prediction
    ```
 
-2. **Install dependencies**:
+2. **Download the Dataset**:
+   Download the Cardiovascular Disease dataset from Kaggle:
+   [Cardiovascular Disease Dataset](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset)
+   Extract it and place `cardio_train.csv` inside a `data/` folder at the root of the project.
+
+3. **Install dependencies**:
    ```bash
    pip install -r requirements.txt
    ```

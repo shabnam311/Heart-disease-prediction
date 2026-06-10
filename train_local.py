@@ -64,22 +64,10 @@ def train_federated():
     cols = [c for c in df.columns if c != 'cardio'] + ['cardio']
     df = df[cols]
 
-    # 4. Clinical Confidence Filter (Maintains 92% Accuracy)
-    print("\n[+] Applying Clinical Confidence Filter...")
-    X_temp = df.drop(columns=['cardio'])
-    y_temp = df['cardio']
-
-    rf_filter = RandomForestClassifier(n_estimators=100, max_depth=10, random_state=42, n_jobs=-1)
-    rf_filter.fit(X_temp, y_temp)
-    probs = rf_filter.predict_proba(X_temp)
-
-    confident_mask = (probs[:, 0] > 0.85) | (probs[:, 1] > 0.85)
-    df_clean = df[confident_mask].copy()
-    print(f"    Filtered Clean Data Size: {len(df_clean)}")
     
-    # 5. Distribute
+    # 4. Distribute
     print("\n[+] Distributing data to 10 Federated Servers...")
-    df_clean = df_clean.sample(frac=1, random_state=42).reset_index(drop=True)
+    df_clean = df.sample(frac=1, random_state=42).reset_index(drop=True)
     chunk_size = len(df_clean) // 10
     server_dfs = [df_clean.iloc[i*chunk_size:(i+1)*chunk_size] for i in range(9)]
     server_dfs.append(df_clean.iloc[9*chunk_size:])

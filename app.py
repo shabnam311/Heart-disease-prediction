@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import json
 
-app = Flask(__name__, template_folder='.')
+app = Flask(__name__, template_folder='templates')
 CORS(app) # Allow GitHub Pages to communicate with the local backend
 
 MODEL_DIR = 'federated_models'
@@ -15,6 +15,28 @@ EXPECTED_FEATURES = [
     'age_years', 'gender', 'height', 'weight', 'ap_hi', 'ap_lo', 
     'cholesterol', 'gluc', 'smoke', 'alco', 'active', 'bmi', 'pulse_pressure'
 ]
+
+# Cache models globally at startup
+MODELS = {}
+GLOBAL_METADATA = None
+
+def load_models():
+    global GLOBAL_METADATA
+    if not os.path.exists(MODEL_DIR):
+        return
+        
+    meta_path = os.path.join(MODEL_DIR, 'secure_aggregation_meta.json')
+    if os.path.exists(meta_path):
+        with open(meta_path, 'r') as f:
+            GLOBAL_METADATA = json.load(f)
+            
+    for file in os.listdir(MODEL_DIR):
+        if file.endswith('_model.pkl'):
+            server_id = file.replace('_model.pkl', '')
+            with open(os.path.join(MODEL_DIR, file), 'rb') as f:
+                MODELS[server_id] = pickle.load(f)
+                
+load_models()
 
 @app.route('/')
 def home():
@@ -67,21 +89,17 @@ def predict():
 
         if server_id == 'global':
             # TECHNIQUE 4: SECURE AGGREGATION
-            meta_path = os.path.join(MODEL_DIR, 'secure_aggregation_meta.json')
-            if not os.path.exists(meta_path):
+            if not GLOBAL_METADATA:
                 return jsonify({'error': 'Global secure aggregation metadata not found.'}), 404
                 
-            with open(meta_path, 'r') as f:
-                metadata = json.load(f)
-                
-            valid_servers = metadata['valid_servers']
-            adaptive_weights = metadata['adaptive_weights']
+            valid_servers = GLOBAL_METADATA['valid_servers']
+            adaptive_weights = GLOBAL_METADATA['adaptive_weights']
             
             global_prob = 0.0
             for sid in valid_servers:
-                m_path = os.path.join(MODEL_DIR, f'{sid}_model.pkl')
-                with open(m_path, 'rb') as f:
-                    model = pickle.load(f)
+                if sid not in MODELS:
+                    continue
+                model = MODELS[sid]
                 prob = model.predict_proba(df_input)[0][1]
                 weight = adaptive_weights[sid]
                 global_prob += (prob * weight)
@@ -90,13 +108,10 @@ def predict():
             prediction = 1 if probability > 0.5 else 0
             
         else:
-            model_path = os.path.join(MODEL_DIR, f'{server_id}_model.pkl')
-            if not os.path.exists(model_path):
+            if server_id not in MODELS:
                 return jsonify({'error': f'Model for {server_id} not found locally.'}), 404
 
-            with open(model_path, 'rb') as f:
-                model = pickle.load(f)
-
+            model = MODELS[server_id]
             prediction = model.predict(df_input)[0]
             probability = model.predict_proba(df_input)[0][1]
 
@@ -111,4 +126,4 @@ def predict():
 
 if __name__ == '__main__':
     print("Starting Clinical CVD Prediction Server...")
-    app.run(debug=True, port=5000)
+    app.run(host='0.0.0.0', port=5000)
