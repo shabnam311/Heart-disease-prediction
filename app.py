@@ -26,13 +26,6 @@ def predict():
         if not server_id:
             return jsonify({'error': 'Server ID not provided.'}), 400
 
-        model_path = os.path.join(MODEL_DIR, f'{server_id}_model.pkl')
-        if not os.path.exists(model_path):
-            return jsonify({'error': f'Model for {server_id} not found locally.'}), 404
-
-        with open(model_path, 'rb') as f:
-            model = pickle.load(f)
-
         # Extract features
         age = float(data.get('age', 50))
         gender = int(data.get('gender', 1))
@@ -69,8 +62,40 @@ def predict():
 
         df_input = pd.DataFrame([feature_values], columns=EXPECTED_FEATURES)
 
-        prediction = model.predict(df_input)[0]
-        probability = model.predict_proba(df_input)[0][1]
+        if server_id == 'global':
+            # TECHNIQUE 4: SECURE AGGREGATION
+            meta_path = os.path.join(MODEL_DIR, 'secure_aggregation_meta.json')
+            if not os.path.exists(meta_path):
+                return jsonify({'error': 'Global secure aggregation metadata not found.'}), 404
+                
+            with open(meta_path, 'r') as f:
+                metadata = json.load(f)
+                
+            valid_servers = metadata['valid_servers']
+            adaptive_weights = metadata['adaptive_weights']
+            
+            global_prob = 0.0
+            for sid in valid_servers:
+                m_path = os.path.join(MODEL_DIR, f'{sid}_model.pkl')
+                with open(m_path, 'rb') as f:
+                    model = pickle.load(f)
+                prob = model.predict_proba(df_input)[0][1]
+                weight = adaptive_weights[sid]
+                global_prob += (prob * weight)
+                
+            probability = float(global_prob)
+            prediction = 1 if probability > 0.5 else 0
+            
+        else:
+            model_path = os.path.join(MODEL_DIR, f'{server_id}_model.pkl')
+            if not os.path.exists(model_path):
+                return jsonify({'error': f'Model for {server_id} not found locally.'}), 404
+
+            with open(model_path, 'rb') as f:
+                model = pickle.load(f)
+
+            prediction = model.predict(df_input)[0]
+            probability = model.predict_proba(df_input)[0][1]
 
         return jsonify({
             'server': server_id,
