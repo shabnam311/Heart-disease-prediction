@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import pickle
 import os
@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import json
 
-app = Flask(__name__, template_folder='templates')
+app = Flask(__name__)
 CORS(app) # Allow GitHub Pages to communicate with the local backend
 
 MODEL_DIR = 'federated_models'
@@ -40,7 +40,7 @@ load_models()
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return send_from_directory('.', 'index.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():
