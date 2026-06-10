@@ -54,7 +54,7 @@ federated-cvd-prediction/
    Navigate to `http://127.0.0.1:5000` in your browser.
 
 > [!NOTE]
-> **GitHub Pages Integration**: You can host the beautiful UI statically on GitHub Pages. However, because GitHub Pages cannot run the Python inference backend, you must keep `python app.py` running on your local machine. The GitHub Pages website will automatically connect to your local backend to make predictions!
+> **Cloud Architecture**: The front-end UI is hosted statically on GitHub Pages, but the heavy Python inference engine is securely hosted on Hugging Face Spaces. When you click "Run Analysis" on the GitHub website, it automatically sends the biometrics to the Hugging Face cloud brain, runs the calculations across the federated models, and returns the prediction instantly! You do **not** need to run anything on your local machine.
 
 ## Performance Metrics
 - **Global Adaptive Accuracy**: 94.56%
