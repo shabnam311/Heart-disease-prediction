@@ -12,8 +12,8 @@ CORS(app) # Allow GitHub Pages to communicate with the local backend
 MODEL_DIR = 'federated_models'
 
 EXPECTED_FEATURES = [
-    'age_years', 'gender', 'height', 'weight', 'ap_hi', 'ap_lo', 
-    'cholesterol', 'gluc', 'smoke', 'alco', 'active', 'bmi', 'pulse_pressure'
+    'gender', 'height', 'weight', 'ap_hi', 'ap_lo', 
+    'cholesterol', 'gluc', 'smoke', 'alco', 'active', 'bmi', 'pulse_pressure', 'age_years'
 ]
 
 # Cache models globally at startup
