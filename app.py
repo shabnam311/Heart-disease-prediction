@@ -1,10 +1,13 @@
 from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS
 import pickle
 import os
 import numpy as np
 import pandas as pd
+import json
 
 app = Flask(__name__, template_folder='.')
+CORS(app) # Allow GitHub Pages to communicate with the local backend
 
 MODEL_DIR = 'federated_models'
 

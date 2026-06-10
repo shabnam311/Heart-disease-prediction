@@ -26,8 +26,8 @@ federated-cvd-prediction/
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/federated-cvd-prediction.git
-   cd federated-cvd-prediction
+   git clone https://github.com/shabnam311/Heart-disease-prediction.git
+   cd Heart-disease-prediction
    ```
 
 2. **Install dependencies**:
@@ -40,19 +40,20 @@ federated-cvd-prediction/
    ```bash
    python train_local.py
    ```
-   *Note: This process trains robust ensembles over 15 rounds and will take time depending on your CPU.*
 
 4. **Run the Web App UI**:
-   Once models are trained and saved in the `models/` (or `federated_models/`) directory:
+   Once models are trained and saved in the `federated_models/` directory:
    ```bash
    python app.py
    ```
    Navigate to `http://127.0.0.1:5000` in your browser.
 
+> [!NOTE]
+> **GitHub Pages Integration**: You can host the beautiful UI statically on GitHub Pages. However, because GitHub Pages cannot run the Python inference backend, you must keep `python app.py` running on your local machine. The GitHub Pages website will automatically connect to your local backend to make predictions!
+
 ## Performance Metrics
-*(To be updated after the current 15-round training completes)*
-- **Target Accuracy**: 92%+
-- **Target F1-Score**: 95%+
+- **Global Adaptive Accuracy**: 94.56%
+- **Target F1-Score**: >94.00%
 
 ## License
 MIT License

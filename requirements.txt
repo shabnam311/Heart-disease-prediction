@@ -5,3 +5,6 @@ torch
 xgboost
 imbalanced-learn
 flask
+gunicorn
+ 
+flask-cors

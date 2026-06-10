@@ -1,422 +1,643 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clinical CVD Prediction System</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #0f4c81;
-            --primary-hover: #1e3a8a;
-            --secondary: #e2e8f0;
-            --bg-main: #f8fafc;
-            --surface-main: #ffffff;
-            --surface-border: #cbd5e1;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --danger: #b91c1c;
-            --danger-bg: #fee2e2;
-            --success: #047857;
-            --success-bg: #d1fae5;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Federated CVD Prediction</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
+  :root {
+    --bg: #f7f6f2;
+    --surface: #ffffff;
+    --surface-alt: #f0efe9;
+    --border: #e2e0d8;
+    --border-strong: #c8c6bc;
+    --text: #1a1917;
+    --text-secondary: #6b6960;
+    --text-muted: #9b9a94;
+    --accent: #1a3a2a;
+    --accent-light: #eaf3de;
+    --accent-mid: #3b6d11;
+    --danger: #a32d2d;
+    --danger-light: #fcebeb;
+    --success: #0f6e56;
+    --success-light: #e1f5ee;
+    --mono: 'Courier New', monospace;
+  }
 
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem;
-        }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.5;
+  }
 
-        .container {
-            width: 100%;
-            max-width: 900px;
-            background: var(--surface-main);
-            border: 1px solid var(--surface-border);
-            border-radius: 8px;
-            padding: 3rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2.5rem;
-        }
+  header {
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    padding: 0 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+  }
 
-        .header {
-            grid-column: 1 / -1;
-            border-bottom: 2px solid var(--primary);
-            padding-bottom: 1.5rem;
-            margin-bottom: 1rem;
-        }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    text-decoration: none;
+  }
 
-        h1 {
-            font-size: 2rem;
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.025em;
-        }
+  .logo-mark {
+    width: 28px;
+    height: 28px;
+    background: var(--accent);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
 
-        p.subtitle {
-            color: var(--text-muted);
-            font-size: 1rem;
-        }
+  .logo-mark svg { display: block; }
 
-        .form-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
+  .header-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: var(--mono);
+    letter-spacing: 0.03em;
+  }
 
-        .full-width {
-            grid-column: 1 / -1;
-        }
+  .hero {
+    padding: 3.5rem 2.5rem 2rem;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
 
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-        }
+  .hero-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
 
-        label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-main);
-        }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.6rem;
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+    max-width: 520px;
+  }
 
-        input, select {
-            background: var(--surface-main);
-            border: 1px solid var(--surface-border);
-            color: var(--text-main);
-            padding: 0.6rem 0.75rem;
-            border-radius: 4px;
-            font-size: 0.95rem;
-            transition: border-color 0.2s ease;
-        }
+  .hero p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    max-width: 480px;
+    line-height: 1.65;
+  }
 
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(15, 76, 129, 0.1);
-        }
+  .layout {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 2.5rem 4rem;
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 1.5rem;
+    align-items: start;
+  }
 
-        .predict-panel {
-            display: flex;
-            flex-direction: column;
-            background: var(--bg-main);
-            border-radius: 8px;
-            padding: 2rem;
-            border: 1px solid var(--surface-border);
-        }
+  .form-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
 
-        button.predict-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            font-size: 1rem;
-            font-weight: 500;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-            transition: background-color 0.2s ease;
-            position: relative;
-        }
+  .card-section {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
 
-        button.predict-btn:hover {
-            background: var(--primary-hover);
-        }
+  .card-section:last-child { border-bottom: none; }
 
-        button.predict-btn:disabled {
-            background: var(--text-muted);
-            cursor: not-allowed;
-        }
+  .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-family: var(--mono);
+    margin-bottom: 1rem;
+  }
 
-        .result-card {
-            margin-top: 1.5rem;
-            width: 100%;
-            padding: 1.5rem;
-            border-radius: 6px;
-            border: 1px solid var(--surface-border);
-            display: none;
-        }
+  .server-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
 
-        .result-card.active {
-            display: block;
-        }
+  .server-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--success);
+    flex-shrink: 0;
+    position: relative;
+  }
 
-        .result-card.high-risk {
-            background: var(--danger-bg);
-            border-color: var(--danger);
-        }
+  .server-dot::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 1.5px solid var(--success);
+    opacity: 0.4;
+  }
 
-        .result-card.low-risk {
-            background: var(--success-bg);
-            border-color: var(--success);
-        }
+  .field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem 1.25rem;
+  }
 
-        .result-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
 
-        .result-prob {
-            font-size: 2.25rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
+  .field.wide { grid-column: 1 / -1; }
 
-        .result-desc {
-            font-size: 0.9rem;
-            line-height: 1.4;
-        }
+  label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 0.01em;
+  }
 
-        .high-risk .result-title, .high-risk .result-prob, .high-risk .result-desc { color: var(--danger); }
-        .low-risk .result-title, .low-risk .result-prob, .low-risk .result-desc { color: var(--success); }
+  input[type="number"], select {
+    height: 36px;
+    padding: 0 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.15s;
+    width: 100%;
+    -webkit-appearance: none;
+  }
 
-        .loader {
-            display: none;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s linear infinite;
-            position: absolute;
-            left: calc(50% - 8px);
-            top: calc(50% - 8px);
-        }
+  input[type="number"]:focus, select:focus {
+    border-color: var(--accent);
+    background: var(--surface);
+  }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+  select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6960' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 28px;
+    appearance: none;
+  }
 
-        .loading .btn-text {
-            opacity: 0;
-        }
+  .sidebar { display: flex; flex-direction: column; gap: 1rem; }
 
-        .loading .loader {
-            display: block;
-        }
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
 
-        .server-selector {
-            grid-column: 1 / -1;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            background: var(--surface-main);
-            padding: 1rem;
-            border-radius: 4px;
-            margin-bottom: 1rem;
-            border: 1px solid var(--surface-border);
-            border-left: 4px solid var(--primary);
-        }
+  .result-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
 
-        .server-selector select {
-            flex: 1;
-        }
+  .result-body { padding: 1.5rem; }
 
-        @media (max-width: 768px) {
-            .container {
-                grid-template-columns: 1fr;
-                padding: 1.5rem;
-            }
-        }
-    </style>
+  .risk-display {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    border-radius: 8px;
+    background: var(--surface-alt);
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+  }
+
+  .risk-display.danger { background: var(--danger-light); }
+  .risk-display.success { background: var(--success-light); }
+
+  .risk-percentage {
+    font-family: 'DM Serif Display', serif;
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+    transition: color 0.3s;
+  }
+
+  .risk-display.danger .risk-percentage { color: var(--danger); }
+  .risk-display.success .risk-percentage { color: var(--success); }
+
+  .risk-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-family: var(--mono);
+  }
+
+  .risk-display.danger .risk-label { color: var(--danger); }
+  .risk-display.success .risk-label { color: var(--success); }
+
+  .risk-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  .run-btn {
+    width: 100%;
+    height: 42px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: opacity 0.15s, transform 0.1s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .run-btn:hover { opacity: 0.88; }
+  .run-btn:active { transform: scale(0.98); }
+  .run-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+  .spinner {
+    display: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading .spinner { display: block; }
+  .loading .btn-label { display: none; }
+
+  .info-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+
+  .stat-row:last-child { border-bottom: none; }
+
+  .stat-key { color: var(--text-secondary); }
+  .stat-val { font-weight: 500; font-family: var(--mono); font-size: 12px; }
+
+  .server-full-select {
+    height: 36px;
+    padding: 0 10px;
+    background: var(--surface-alt);
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6960' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 28px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+    flex: 1;
+  }
+
+  .server-full-select:focus { border-color: var(--accent); }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 1.25rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    max-width: 100%;
+  }
+
+  .disclaimer {
+    max-width: 480px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 760px) {
+    .layout { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 2rem; }
+    header { padding: 0 1.25rem; }
+    .hero, .layout { padding-left: 1.25rem; padding-right: 1.25rem; }
+  }
+</style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="header">
-            <h1>Clinical CVD Prediction System</h1>
-            <p class="subtitle">High-Accuracy Federated Diagnostic Tool</p>
-        </div>
+<header>
+  <a class="logo" href="#">
+    <div class="logo-mark">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M7 1C3.686 1 1 3.686 1 7s2.686 6 6 6 6-2.686 6-6-2.686-6-6-6z" stroke="#fff" stroke-width="1.2"/>
+        <path d="M4 7h6M7 4v6" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    Federated CVD
+  </a>
+  <span class="header-meta">v1.0 &mdash; Secure Aggregation</span>
+</header>
 
-        <div class="form-section">
-            <div class="server-selector">
-                <label>Target Model Node:</label>
-                <select id="serverSelect">
-                    <option value="global" style="font-weight: bold; color: var(--primary);">Global Secure Aggregation (RECOMMENDED)</option>
-                    <option value="server_1">Node 1 (Partition A)</option>
-                    <option value="server_2">Node 2 (Partition B)</option>
-                    <option value="server_3">Node 3 (Partition C)</option>
-                    <option value="server_4">Node 4 (Partition D)</option>
-                    <option value="server_5">Node 5 (Partition E)</option>
-                    <option value="server_6">Node 6 (Partition F)</option>
-                    <option value="server_7">Node 7 (Partition G)</option>
-                    <option value="server_8">Node 8 (Partition H)</option>
-                    <option value="server_9">Node 9 (Defective/Poisoned Partition)</option>
-                    <option value="server_10">Node 10 (Partition J)</option>
-                </select>
-            </div>
+<section class="hero">
+  <p class="hero-label">Cardiovascular Risk Assessment</p>
+  <h1>Privacy-preserving heart disease prediction</h1>
+  <p>Enter patient biometrics to receive a cardiovascular disease risk estimate from a selected federated hospital model trained without centralizing sensitive records.</p>
+</section>
 
-            <!-- Features -->
-            <div class="input-group">
-                <label>Age (Years)</label>
-                <input type="number" id="age" value="50" min="20" max="100">
-            </div>
-            
-            <div class="input-group">
-                <label>Gender</label>
-                <select id="gender">
-                    <option value="1">Women</option>
-                    <option value="2">Men</option>
-                </select>
-            </div>
+<div class="layout">
 
-            <div class="input-group">
-                <label>Height (cm)</label>
-                <input type="number" id="height" value="165" min="100" max="250">
-            </div>
+  <div class="form-card">
 
-            <div class="input-group">
-                <label>Weight (kg)</label>
-                <input type="number" id="weight" value="70" min="30" max="250">
-            </div>
-
-            <div class="input-group">
-                <label>Systolic Blood Pressure</label>
-                <input type="number" id="ap_hi" value="120" min="60" max="250">
-            </div>
-
-            <div class="input-group">
-                <label>Diastolic Blood Pressure</label>
-                <input type="number" id="ap_lo" value="80" min="40" max="180">
-            </div>
-
-            <div class="input-group">
-                <label>Cholesterol</label>
-                <select id="cholesterol">
-                    <option value="1">Normal (1)</option>
-                    <option value="2">Above Normal (2)</option>
-                    <option value="3">Well Above Normal (3)</option>
-                </select>
-            </div>
-
-            <div class="input-group">
-                <label>Glucose</label>
-                <select id="gluc">
-                    <option value="1">Normal (1)</option>
-                    <option value="2">Above Normal (2)</option>
-                    <option value="3">Well Above Normal (3)</option>
-                </select>
-            </div>
-
-            <div class="input-group">
-                <label>Smoking</label>
-                <select id="smoke">
-                    <option value="0">No (0)</option>
-                    <option value="1">Yes (1)</option>
-                </select>
-            </div>
-
-            <div class="input-group">
-                <label>Alcohol Intake</label>
-                <select id="alco">
-                    <option value="0">No (0)</option>
-                    <option value="1">Yes (1)</option>
-                </select>
-            </div>
-
-            <div class="input-group full-width">
-                <label>Physical Activity</label>
-                <select id="active">
-                    <option value="0">No (0)</option>
-                    <option value="1">Yes (1)</option>
-                </select>
-            </div>
-
-        </div>
-
-        <div class="predict-panel">
-            <button class="predict-btn" id="predictBtn" onclick="makePrediction()">
-                <span class="btn-text">Execute Clinical Analysis</span>
-                <div class="loader"></div>
-            </button>
-
-            <div class="result-card" id="resultCard">
-                <div class="result-title" id="resultTitle">Analysis Complete</div>
-                <div class="result-prob" id="resultProb">--%</div>
-                <p class="result-desc" id="resultDesc">Awaiting patient data...</p>
-            </div>
-        </div>
+    <div class="card-section">
+      <p class="section-label">Hospital model</p>
+      <div class="server-row">
+        <div class="server-dot"></div>
+        <select class="server-full-select" id="serverSelect">
+          <option value="global" style="font-weight: bold; color: var(--success);">Global Secure Aggregation (RECOMMENDED)</option>
+          <option value="server_1">Server 1 — Partition A</option>
+          <option value="server_2">Server 2 — Partition B</option>
+          <option value="server_3">Server 3 — Partition C</option>
+          <option value="server_4">Server 4 — Partition D</option>
+          <option value="server_5">Server 5 — Partition E</option>
+          <option value="server_6">Server 6 — Partition F</option>
+          <option value="server_7">Server 7 — Partition G</option>
+          <option value="server_8">Server 8 — Partition H</option>
+          <option value="server_9">Server 9 — Poisoned/Defective Node</option>
+          <option value="server_10">Server 10 — Partition J</option>
+        </select>
+      </div>
     </div>
 
-    <script>
-        async function makePrediction() {
-            const btn = document.getElementById('predictBtn');
-            const resultCard = document.getElementById('resultCard');
-            
-            btn.classList.add('loading');
-            btn.disabled = true;
-            resultCard.classList.remove('active', 'high-risk', 'low-risk');
+    <div class="card-section">
+      <p class="section-label">Patient demographics</p>
+      <div class="field-grid">
+        <div class="field">
+          <label for="age">Age</label>
+          <input type="number" id="age" value="55" min="20" max="100">
+        </div>
+        <div class="field">
+          <label for="gender">Sex</label>
+          <select id="gender">
+            <option value="2">Male</option>
+            <option value="1">Female</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="height">Height (cm)</label>
+          <input type="number" id="height" value="165" min="100" max="250">
+        </div>
+        <div class="field">
+          <label for="weight">Weight (kg)</label>
+          <input type="number" id="weight" value="70" min="30" max="250">
+        </div>
+      </div>
+    </div>
 
-            const data = {
-                server: document.getElementById('serverSelect').value,
-                age: document.getElementById('age').value,
-                gender: document.getElementById('gender').value,
-                height: document.getElementById('height').value,
-                weight: document.getElementById('weight').value,
-                ap_hi: document.getElementById('ap_hi').value,
-                ap_lo: document.getElementById('ap_lo').value,
-                cholesterol: document.getElementById('cholesterol').value,
-                gluc: document.getElementById('gluc').value,
-                smoke: document.getElementById('smoke').value,
-                alco: document.getElementById('alco').value,
-                active: document.getElementById('active').value
-            };
+    <div class="card-section">
+      <p class="section-label">Vitals & Blood</p>
+      <div class="field-grid">
+        <div class="field">
+          <label for="ap_hi">Systolic BP</label>
+          <input type="number" id="ap_hi" value="120" min="60" max="250">
+        </div>
+        <div class="field">
+          <label for="ap_lo">Diastolic BP</label>
+          <input type="number" id="ap_lo" value="80" min="40" max="150">
+        </div>
+        <div class="field">
+          <label for="cholesterol">Cholesterol</label>
+          <select id="cholesterol">
+            <option value="1">Normal</option>
+            <option value="2">Above Normal</option>
+            <option value="3">Well Above Normal</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="gluc">Glucose</label>
+          <select id="gluc">
+            <option value="1">Normal</option>
+            <option value="2">Above Normal</option>
+            <option value="3">Well Above Normal</option>
+          </select>
+        </div>
+      </div>
+    </div>
 
-            try {
-                const response = await fetch('/predict', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
+    <div class="card-section">
+      <p class="section-label">Lifestyle Factors</p>
+      <div class="field-grid">
+        <div class="field">
+          <label for="smoke">Smoking</label>
+          <select id="smoke">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="alco">Alcohol Intake</label>
+          <select id="alco">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+          </select>
+        </div>
+        <div class="field wide">
+          <label for="active">Physical Activity</label>
+          <select id="active">
+            <option value="0">Sedentary</option>
+            <option value="1">Active</option>
+          </select>
+        </div>
+      </div>
+    </div>
 
-                const result = await response.json();
+  </div>
 
-                if (response.ok) {
-                    const probPercent = (result.probability * 100).toFixed(1);
-                    const isHighRisk = result.prediction === 1;
+  <div class="sidebar">
 
-                    document.getElementById('resultProb').textContent = probPercent + '%';
-                    
-                    if (isHighRisk) {
-                        document.getElementById('resultTitle').textContent = 'High CVD Risk Indicated';
-                        document.getElementById('resultDesc').textContent = 'The model indicates a high probability of cardiovascular disease based on the provided clinical metrics. Further diagnostic evaluation is recommended.';
-                        resultCard.classList.add('high-risk');
-                    } else {
-                        document.getElementById('resultTitle').textContent = 'Low CVD Risk Indicated';
-                        document.getElementById('resultDesc').textContent = 'The model indicates a low probability of cardiovascular disease. Standard preventive care is advised.';
-                        resultCard.classList.add('low-risk');
-                    }
-                } else {
-                    document.getElementById('resultTitle').textContent = 'System Error';
-                    document.getElementById('resultProb').textContent = 'N/A';
-                    document.getElementById('resultDesc').textContent = result.error || 'Failed to process clinical data.';
-                    resultCard.classList.add('high-risk');
-                }
-            } catch (error) {
-                document.getElementById('resultTitle').textContent = 'Connection Error';
-                document.getElementById('resultProb').textContent = 'N/A';
-                document.getElementById('resultDesc').textContent = 'Could not establish connection to the inference server.';
-                resultCard.classList.add('high-risk');
-            }
+    <div class="result-card">
+      <div class="result-header">
+        <p class="section-label" style="margin-bottom:0;">Risk analysis</p>
+      </div>
+      <div class="result-body">
+        <div class="risk-display" id="riskDisplay">
+          <div class="risk-percentage" id="riskPct">—</div>
+          <div class="risk-label" id="riskLabel">awaiting input</div>
+        </div>
+        <p class="risk-desc" id="riskDesc" style="margin-bottom:1rem;">Enter biometrics and run analysis to receive a cardiovascular disease probability estimate.</p>
+        <button class="run-btn" id="runBtn" onclick="runAnalysis()">
+          <span class="btn-label">Run analysis</span>
+          <div class="spinner"></div>
+        </button>
+      </div>
+    </div>
 
-            btn.classList.remove('loading');
-            btn.disabled = false;
-            resultCard.classList.add('active');
-        }
-    </script>
+    <div class="info-card">
+      <p class="section-label">Model information</p>
+      <div class="stat-row">
+        <span class="stat-key">Architecture</span>
+        <span class="stat-val">XGBoost DP</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-key">Privacy Mode</span>
+        <span class="stat-val">Laplace Noise</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-key">Hospital nodes</span>
+        <span class="stat-val">10</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-key">Aggregation</span>
+        <span class="stat-val">Secure Voting</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-key">Global Accuracy</span>
+        <span class="stat-val">94.56%</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-key">Global F1-Score</span>
+        <span class="stat-val">94.90%</span>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  <p class="disclaimer">This tool is intended for research and educational purposes only. It is not a substitute for professional medical diagnosis. Always consult a qualified clinician.</p>
+  <span>Federated CVD &mdash; 2024</span>
+</footer>
+
+<script>
+async function runAnalysis() {
+  const btn = document.getElementById('runBtn');
+  const display = document.getElementById('riskDisplay');
+  const pct = document.getElementById('riskPct');
+  const label = document.getElementById('riskLabel');
+  const desc = document.getElementById('riskDesc');
+
+  btn.disabled = true;
+  btn.classList.add('loading');
+  display.className = 'risk-display';
+  pct.textContent = '—';
+  label.textContent = 'running...';
+  desc.textContent = '';
+
+  const data = {
+    server: document.getElementById('serverSelect').value,
+    age: document.getElementById('age').value,
+    gender: document.getElementById('gender').value,
+    height: document.getElementById('height').value,
+    weight: document.getElementById('weight').value,
+    ap_hi: document.getElementById('ap_hi').value,
+    ap_lo: document.getElementById('ap_lo').value,
+    cholesterol: document.getElementById('cholesterol').value,
+    gluc: document.getElementById('gluc').value,
+    smoke: document.getElementById('smoke').value,
+    alco: document.getElementById('alco').value,
+    active: document.getElementById('active').value
+  };
+
+  try {
+    const baseUrl = window.location.hostname.includes('github.io') ? 'http://127.0.0.1:5000' : '';
+    const res = await fetch(baseUrl + '/predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+      const prob = (result.probability * 100).toFixed(1);
+      const high = result.prediction === 1;
+      pct.textContent = prob + '%';
+      if (high) {
+        label.textContent = 'elevated risk';
+        desc.textContent = 'This model predicts an elevated probability of cardiovascular disease based on the provided biometrics. Clinical review is recommended.';
+        display.className = 'risk-display danger';
+      } else {
+        label.textContent = 'low risk';
+        desc.textContent = 'This model predicts a low probability of cardiovascular disease. Regular health monitoring and preventive care remain important.';
+        display.className = 'risk-display success';
+      }
+    } else {
+      pct.textContent = 'err';
+      label.textContent = 'server error';
+      desc.textContent = result.error || 'The inference server returned an error. Ensure app.py is running locally.';
+    }
+  } catch {
+    pct.textContent = '—';
+    label.textContent = 'no connection';
+    desc.textContent = 'Could not reach the local inference server. Start app.py and reload.';
+  }
+
+  btn.disabled = false;
+  btn.classList.remove('loading');
+}
+</script>
+
 </body>
 </html>
