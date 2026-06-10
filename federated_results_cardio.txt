@@ -1,0 +1,14 @@
+Final Results:
+Server 1: Acc: 0.9195, F1: 0.9189
+Server 2: Acc: 0.9370, F1: 0.9389
+Server 3: Acc: 0.9485, F1: 0.9489
+Server 4: Acc: 0.9480, F1: 0.9509
+Server 5: Acc: 0.9188, F1: 0.9236
+Server 6: Acc: 0.9615, F1: 0.9603
+Server 7: Acc: 0.9167, F1: 0.9242
+Server 8: Acc: 0.9478, F1: 0.9504
+Server 9: Acc: 0.9407, F1: 0.9345
+Server 10: Acc: 0.9483, F1: 0.9500
+
+Global Average Accuracy: 0.9387
+Global Average F1-Score: 0.9401

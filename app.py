@@ -6,19 +6,12 @@ import pandas as pd
 
 app = Flask(__name__, template_folder='.')
 
-# Path to the models directory
 MODEL_DIR = 'federated_models'
 
-# Load a default model at startup if available
-default_model = None
-try:
-    default_model_path = os.path.join(MODEL_DIR, 'server_1_model.pkl')
-    if os.path.exists(default_model_path):
-        with open(default_model_path, 'rb') as f:
-            default_model = pickle.load(f)
-        print("Default model (server_1) loaded successfully.")
-except Exception as e:
-    print(f"Error loading default model: {e}")
+EXPECTED_FEATURES = [
+    'age_years', 'gender', 'height', 'weight', 'ap_hi', 'ap_lo', 
+    'cholesterol', 'gluc', 'smoke', 'alco', 'active', 'bmi', 'pulse_pressure'
+]
 
 @app.route('/')
 def home():
@@ -27,58 +20,67 @@ def home():
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        # Extract features from the POST request
         data = request.json
-        features = [
-            float(data['age']),
-            float(data['sex']),
-            float(data['cp']),
-            float(data['trestbps']),
-            float(data['chol']),
-            float(data['fbs']),
-            float(data['restecg']),
-            float(data['thalach']),
-            float(data['exang']),
-            float(data['oldpeak']),
-            float(data['slope']),
-            float(data['ca']),
-            float(data['thal'])
-        ]
+        server_id = data.get('server')
         
-        # Convert to numpy array
-        features_array = np.array(features).reshape(1, -1)
-        
-        # We need a dataframe if the model expects feature names
-        feature_names = ['age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 
-                         'thalach', 'exang', 'oldpeak', 'slope', 'ca', 'thal']
-        features_df = pd.DataFrame(features_array, columns=feature_names)
+        if not server_id:
+            return jsonify({'error': 'Server ID not provided.'}), 400
 
-        # Get server choice
-        server = data.get('server', 'server_1')
-        model_path = os.path.join(MODEL_DIR, f'{server}_model.pkl')
-        
-        # Load the selected model
+        model_path = os.path.join(MODEL_DIR, f'{server_id}_model.pkl')
         if not os.path.exists(model_path):
-            return jsonify({'error': f'Model for {server} not found! Ensure training has finished.'}), 404
-            
+            return jsonify({'error': f'Model for {server_id} not found locally.'}), 404
+
         with open(model_path, 'rb') as f:
             model = pickle.load(f)
-            
-        # Make prediction
-        prediction = model.predict(features_df)
-        probability = model.predict_proba(features_df)[0][1] # Probability of class 1 (CVD)
+
+        # Extract features
+        age = float(data.get('age', 50))
+        gender = int(data.get('gender', 1))
+        height = float(data.get('height', 165))
+        weight = float(data.get('weight', 70))
+        ap_hi = float(data.get('ap_hi', 120))
+        ap_lo = float(data.get('ap_lo', 80))
+        cholesterol = int(data.get('cholesterol', 1))
+        gluc = int(data.get('gluc', 1))
+        smoke = int(data.get('smoke', 0))
+        alco = int(data.get('alco', 0))
+        active = int(data.get('active', 1))
         
-        result = {
-            'prediction': int(prediction[0]),
-            'probability': float(probability),
-            'server_used': server
+        # Derived
+        bmi = weight / ((height / 100) ** 2)
+        pulse_pressure = ap_hi - ap_lo
+        age_years = age
+
+        feature_values = {
+            'age_years': age_years,
+            'gender': gender,
+            'height': height,
+            'weight': weight,
+            'ap_hi': ap_hi,
+            'ap_lo': ap_lo,
+            'cholesterol': cholesterol,
+            'gluc': gluc,
+            'smoke': smoke,
+            'alco': alco,
+            'active': active,
+            'bmi': bmi,
+            'pulse_pressure': pulse_pressure
         }
-        
-        return jsonify(result)
-        
+
+        df_input = pd.DataFrame([feature_values], columns=EXPECTED_FEATURES)
+
+        prediction = model.predict(df_input)[0]
+        probability = model.predict_proba(df_input)[0][1]
+
+        return jsonify({
+            'server': server_id,
+            'prediction': int(prediction),
+            'probability': float(probability)
+        })
+
     except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    print("Starting Cardiovascular Disease Prediction Server...")
+    print("Starting Clinical CVD Prediction Server...")
     app.run(debug=True, port=5000)

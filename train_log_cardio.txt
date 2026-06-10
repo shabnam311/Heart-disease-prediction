@@ -1,0 +1,125 @@
+============================================================
+STARTING CLINICAL FEDERATED TRAINING (CARDIO_TRAIN)
+============================================================
+
+[+] Applying Clinical Confidence Filter...
+    Original size: 68645
+    Filtered Clinical size: 10104
+
+[+] Distributing data to 10 Federated Servers...
+
+============================================================
+Training server_1 - Personalized Model
+============================================================
+  [1/3] Applying SMOTE Balancing...
+  [2/3] Training Ultra-Strong XGBoost Ensemble...
+  [3/3] Saving personalized model...
+
+  RESULTS:
+    Test Accuracy: 0.9195
+    Test F1-Score: 0.9189
+
+============================================================
+Training server_2 - Personalized Model
+============================================================
+  [1/3] Applying SMOTE Balancing...
+  [2/3] Training Ultra-Strong XGBoost Ensemble...
+  [3/3] Saving personalized model...
+
+  RESULTS:
+    Test Accuracy: 0.9370
+    Test F1-Score: 0.9389
+
+============================================================
+Training server_3 - Personalized Model
+============================================================
+  [1/3] Applying SMOTE Balancing...
+  [2/3] Training Ultra-Strong XGBoost Ensemble...
+  [3/3] Saving personalized model...
+
+  RESULTS:
+    Test Accuracy: 0.9485
+    Test F1-Score: 0.9489
+
+============================================================
+Training server_4 - Personalized Model
+============================================================
+  [1/3] Applying SMOTE Balancing...
+  [2/3] Training Ultra-Strong XGBoost Ensemble...
+  [3/3] Saving personalized model...
+
+  RESULTS:
+    Test Accuracy: 0.9480
+    Test F1-Score: 0.9509
+
+============================================================
+Training server_5 - Personalized Model
+============================================================
+  [1/3] Applying SMOTE Balancing...
+  [2/3] Training Ultra-Strong XGBoost Ensemble...
+  [3/3] Saving personalized model...
+
+  RESULTS:
+    Test Accuracy: 0.9188
+    Test F1-Score: 0.9236
+
+============================================================
+Training server_6 - Personalized Model
+============================================================
+  [1/3] Applying SMOTE Balancing...
+  [2/3] Training Ultra-Strong XGBoost Ensemble...
+  [3/3] Saving personalized model...
+
+  RESULTS:
+    Test Accuracy: 0.9615
+    Test F1-Score: 0.9603
+
+============================================================
+Training server_7 - Personalized Model
+============================================================
+  [1/3] Applying SMOTE Balancing...
+  [2/3] Training Ultra-Strong XGBoost Ensemble...
+  [3/3] Saving personalized model...
+
+  RESULTS:
+    Test Accuracy: 0.9167
+    Test F1-Score: 0.9242
+
+============================================================
+Training server_8 - Personalized Model
+============================================================
+  [1/3] Applying SMOTE Balancing...
+  [2/3] Training Ultra-Strong XGBoost Ensemble...
+  [3/3] Saving personalized model...
+
+  RESULTS:
+    Test Accuracy: 0.9478
+    Test F1-Score: 0.9504
+
+============================================================
+Training server_9 - Personalized Model
+============================================================
+  [1/3] Applying SMOTE Balancing...
+  [2/3] Training Ultra-Strong XGBoost Ensemble...
+  [3/3] Saving personalized model...
+
+  RESULTS:
+    Test Accuracy: 0.9407
+    Test F1-Score: 0.9345
+
+============================================================
+Training server_10 - Personalized Model
+============================================================
+  [1/3] Applying SMOTE Balancing...
+  [2/3] Training Ultra-Strong XGBoost Ensemble...
+  [3/3] Saving personalized model...
+
+  RESULTS:
+    Test Accuracy: 0.9483
+    Test F1-Score: 0.9500
+
+================================================================================
+FEDERATED TRAINING COMPLETE
+================================================================================
+Global Average Accuracy: 0.9387
+Global Average F1-Score: 0.9401
